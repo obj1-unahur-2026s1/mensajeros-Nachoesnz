@@ -1,9 +1,53 @@
-import example.pepita
+import destinos.*
+import mensajeros.*
+import paquetes.*
 
-describe "group of tests for pepita" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+describe "Primeros test" {
+
+  test "Que roberto (90kg) puede llevar un paquete que está pago en un camión que tiene un acoplado." {
+    roberto.cambiarPeso(90)
+    roberto.usarCamion()
+    camion.cambiarCantidadAcoplados(1)
+    paquete.validarPago()
+
+
+    assert.equals(true, (puenteBrooklyn.puedePasar(roberto)))
   }
 
+  test "Que roberto pese 90 kg, y que ande en bicicleta, deberia pesar 95."{
+    roberto.cambiarPeso(90)
+    roberto.usarBicicleta()
+
+
+    assert.equals(95, roberto.peso())
+  }
+
+  test "Que roberto pese 90 kg, y que ande en camion sin acoplado, deberia pesar 290."{
+    roberto.cambiarPeso(90)
+    roberto.usarCamion()
+    camion.cambiarCantidadAcoplados(0)
+
+    assert.equals(290, roberto.peso())
+  }
+
+  test "Que neo con crédito no puede llevar un paquete que no está pago a la matrix."{
+    neo.cargarleCredito()
+    paquete.cancelarPago()
+    assert.equals(!true, (laMatrix.puedePasar(neo)))
+
+  }
+
+
+}
+
+describe "Segundos test"{
+  test "1: contratar a un mensajero"{
+    
+  }
+  test "2: Ver lista de mensajeros"{}
+  test "3: Ver lista de mensajeros"{}
+  test "4: Ver lista de mensajeros"{}
+  test "5: Ver lista de mensajeros"{}
+  test "6: Ver lista de mensajeros"{}
 }

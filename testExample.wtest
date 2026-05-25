@@ -1,3 +1,4 @@
+import empresaMensajeria.*
 import destinos.*
 import mensajeros.*
 import paquetes.*
@@ -43,11 +44,61 @@ describe "Primeros test" {
 
 describe "Segundos test"{
   test "1: contratar a un mensajero"{
-    
+    // VACIAMOS LISTA Y LUEGO CONTRATAMOS.
+    empresaMensajeria.despedirATodos()
+    empresaMensajeria.agregarMensajero(roberto)
+    assert.equals([roberto], empresaMensajeria.verMensajeros())
   }
-  test "2: Ver lista de mensajeros"{}
-  test "3: Ver lista de mensajeros"{}
-  test "4: Ver lista de mensajeros"{}
-  test "5: Ver lista de mensajeros"{}
-  test "6: Ver lista de mensajeros"{}
+
+  test "2: sacar mensajero"{
+    empresaMensajeria.despedirATodos()
+    empresaMensajeria.agregarMensajero(roberto)
+    empresaMensajeria.agregarMensajero(neo)
+    empresaMensajeria.sacarMensajero(roberto)
+    assert.equals([neo], empresaMensajeria.verMensajeros())
+  }
+
+  test "3: despedir a todos"{
+    empresaMensajeria.despedirATodos()
+    empresaMensajeria.agregarMensajero(roberto)
+    empresaMensajeria.agregarMensajero(neo)
+    empresaMensajeria.despedirATodos()
+    assert.equals([], empresaMensajeria.verMensajeros())
+  }
+
+  test "4: esEmpresaGrande"{
+    empresaMensajeria.despedirATodos()
+    empresaMensajeria.agregarMensajero(roberto)
+    empresaMensajeria.agregarMensajero(neo)
+    empresaMensajeria.agregarMensajero(chuckNorris)
+    assert.equals(true, empresaMensajeria.esEmpresaGrande())
+    empresaMensajeria.sacarMensajero(chuckNorris)
+    assert.equals(false, empresaMensajeria.esEmpresaGrande())
+  }
+
+  test "5: primerEmpleado y ultimoEmpleado"{
+    empresaMensajeria.despedirATodos()
+    empresaMensajeria.agregarMensajero(roberto)
+    empresaMensajeria.agregarMensajero(neo)
+    assert.equals(roberto, empresaMensajeria.primerEmpleado())
+    assert.equals(neo, empresaMensajeria.ultimoEmpleado())
+  }
+
+  test "6: pesoUltimoMensajero"{
+    empresaMensajeria.despedirATodos()
+    empresaMensajeria.agregarMensajero(roberto)
+    empresaMensajeria.agregarMensajero(chuckNorris)
+    assert.equals(chuckNorris.peso(), empresaMensajeria.pesoUltimoMensajero())
+  }
+
+  test "7: puedeSerEntregadoPorElPrimerMensajero"{
+    empresaMensajeria.despedirATodos()
+    empresaMensajeria.agregarMensajero(roberto)
+    object paquetePrueba{
+      method puedeSerEntregado(mensajero){
+        return mensajero == roberto
+      }
+    }
+    assert.equals(true, empresaMensajeria.puedeSerEntregadoPorElPrimerMensajero(paquetePrueba))
+  }
 }

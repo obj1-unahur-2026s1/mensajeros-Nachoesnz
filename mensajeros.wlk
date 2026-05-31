@@ -1,3 +1,10 @@
+// Nuevo mensajero para requerimiento 9
+object speedy {
+  var pesoActual = 70
+  method peso() { return pesoActual }
+  method cambiarPeso(nuevoPeso) { pesoActual = nuevoPeso }
+  method puedeLlevar(paquete) { return true } // puede llevar cualquier paquete
+}
 import destinos.*
 import paquetes.*
 

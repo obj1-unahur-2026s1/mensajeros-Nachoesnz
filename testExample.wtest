@@ -102,3 +102,97 @@ describe "Segundos test"{
     assert.equals(true, empresaMensajeria.puedeSerEntregadoPorElPrimerMensajero(paquetePrueba))
   }
 }
+
+describe "Test nuevos requerimientos mensajería" {
+
+  before {
+    empresaMensajeria.despedirATodos()
+    empresaMensajeria.limpiarPaquetes()
+    empresaMensajeria.agregarMensajero(roberto)
+    empresaMensajeria.agregarMensajero(neo)
+    empresaMensajeria.agregarMensajero(chuckNorris)
+    empresaMensajeria.agregarMensajero(speedy)
+  }
+
+  test "1: Puede entregar paquete (paquetito y paquete)" {
+    assert.equals(true, empresaMensajeria.puedeEntregarPaquete(paquetito))
+    assert.equals(true, empresaMensajeria.puedeEntregarPaquete(paquete))
+  }
+
+  test "2: Mensajeros que pueden entregar paquetito (todos) y paquete (al menos uno)" {
+    var todos = empresaMensajeria.verMensajeros()
+    assert.equals(todos, empresaMensajeria.mensajerosQuePueden(paquetito))
+    assert.equals(true, empresaMensajeria.mensajerosQuePueden(paquete).size() > 0)
+  }
+
+  test "3: Empresa con sobrepeso y sin sobrepeso" {
+    roberto.cambiarPeso(1000)
+    neo.cambiarPeso(1000)
+    chuckNorris.cambiarPeso(1000)
+    speedy.cambiarPeso(1000)
+    assert.equals(true, empresaMensajeria.tieneSobrepeso())
+    roberto.cambiarPeso(70)
+    neo.cambiarPeso(70)
+    chuckNorris.cambiarPeso(70)
+    speedy.cambiarPeso(70)
+    assert.equals(false, empresaMensajeria.tieneSobrepeso())
+  }
+
+  test "4: Enviar paquete, si no puede va a pendientes" {
+    object paqueteImposible {
+      method puedeSerEntregado(m) { return false }
+      method precio() { return 999 }
+    }
+    assert.equals(true, empresaMensajeria.enviarPaquete(paquetito))
+    assert.equals(false, empresaMensajeria.enviarPaquete(paqueteImposible))
+    assert.equals([paqueteImposible], empresaMensajeria.verPaquetesPendientes())
+    assert.equals(true, empresaMensajeria.verPaquetesEnviados().contains(paquetito))
+  }
+
+  test "5: Facturación suma precios de enviados" {
+    empresaMensajeria.limpiarPaquetes()
+    empresaMensajeria.enviarPaquete(paquetito)
+    empresaMensajeria.enviarPaquete(paqueteExpress)
+    assert.equals(75, empresaMensajeria.facturacion())
+  }
+
+  test "6: Enviar varios paquetes" {
+    empresaMensajeria.limpiarPaquetes()
+    empresaMensajeria.enviarPaquetes([paquetito, paqueteExpress])
+    assert.equals(2, empresaMensajeria.verPaquetesEnviados().size())
+  }
+
+  test "7: Enviar pendiente más caro" {
+    empresaMensajeria.limpiarPaquetes()
+    object paqueteBarato { method puedeSerEntregado(m) { return false } method precio() { return 10 } }
+    object paqueteCaro { var entregado = false method puedeSerEntregado(m) { return m == speedy } method precio() { return 1000 } }
+    empresaMensajeria.enviarPaquete(paqueteBarato)
+    empresaMensajeria.enviarPaquete(paqueteCaro)
+    speedy.cambiarPeso(70)
+    assert.equals(true, empresaMensajeria.enviarPendienteMasCaro())
+    assert.equals(false, empresaMensajeria.verPaquetesPendientes().contains(paqueteCaro))
+  }
+
+  test "8: Paqueton viajero, pagos parciales y destinos" {
+    var pviajero = paquetonViajero
+    pviajero.destinos.clear()
+    pviajero.agregarDestino(puenteBrooklyn)
+    pviajero.agregarDestino(laMatrix)
+    pviajero.cancelarPago()
+    assert.equals(false, pviajero.verEstadoPago())
+    pviajero.pagar(100)
+    assert.equals(false, pviajero.verEstadoPago())
+    pviajero.pagar(100)
+    assert.equals(true, pviajero.verEstadoPago())
+    assert.equals(true, pviajero.puedeSerEntregado(roberto))
+  }
+
+  test "9: Nuevo mensajero y paquete funcionan" {
+    speedy.cambiarPeso(80)
+    assert.equals(true, speedy.puedeLlevar(paqueteExpress))
+    assert.equals(true, empresaMensajeria.puedeEntregarPaquete(paqueteExpress))
+    assert.equals(true, empresaMensajeria.enviarPaquete(paqueteExpress))
+    assert.equals(true, empresaMensajeria.verPaquetesEnviados().contains(paqueteExpress))
+  }
+
+}
